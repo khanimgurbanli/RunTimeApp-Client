@@ -1,0 +1,52 @@
+﻿body {
+	font-family: sans-serif;
+	font-size: 16px;
+	line-height: 1.8;
+	color: #333;
+}
+
+.send-button {
+	border: none;
+	border-radius: 5px;
+	background-color: forestgreen;
+	color: white;
+	padding: 15px 25px;
+	margin: 10px;
+	float: right;
+}
+
+.send-button:hover {
+	background-color:green
+}
+
+.form-contain {
+	widht: 90%;
+	max-width: 500px;
+	margin: 30px auto;
+}
+
+.email-group {
+	display: flex;
+	margin: 10px 0;
+}
+
+input {
+	border: 2px solid #ececec;
+	padding: .375em .75em;
+	font-size: 1em;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.email-group .atmark {
+	display: inline-block;
+	border-top: 2px solid #ececec;
+	border-bottom: 2px solid #ececec;
+	padding: .375em;
+	background: #f4fff1;
+}
+
+::placeholder {
+	color: #ccc;
+	opacity: 1;
+}

@@ -1,0 +1,68 @@
+﻿@{
+    Layout = null;
+}
+@model RealTimeApp.Client.ViewModels.SendOtp_ViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sign Up Form by Colorlib</title>
+
+    <!-- Main css -->
+    <link rel="stylesheet" href="~/auth/sendmail/style.css">
+</head>
+<body>
+
+    <form method="POST" action="sendotp">
+        <div class="form-contain">
+            <h1>Send OTP</h1>
+
+            <label>Email</label>
+            <div class="email-group">
+                <input type="text" id="email1" name="username" placeholder="username" value="@Model.username">
+                <span class="atmark">＠</span>
+                <input type="text" id="email2" name="domain" placeholder="example.com" value="@Model.domain">
+            </div>
+            <span asp-validation-for="username" style="color:red"></span> 
+            <span asp-validation-for="domain" style="color:red"></span>
+            <br /> 
+
+            <label>Re-enter Email</label>
+            <div>
+                <input type="text" id="cemail1" name="email" placeholder="user@example.com" value="@Model.email">
+                <span asp-validation-for="email" style="color:red"></span>
+            </div>
+
+            <button class="send-button">Send Me</button>
+        </div>
+    </form>
+
+   @*  <form method="POST" action="sendotp">
+        <div class="form-contain">
+            <h1>Send OTP</h1>
+
+            <label>Email</label>
+            <div class="email-group">
+                <input type="text" id="email1" name="username" placeholder="username" value="">
+                <span class="atmark">＠</span>
+                <input type="text" id="email2" name="domain" placeholder="example.com" value="">
+            </div>
+            <label>Re-enter Email</label>
+            <div>
+                <input type="text" id="cemail1" name="email" placeholder="user@example.com" value="">
+            </div>
+
+            <button class="send-button">Send Me</button>
+        </div>
+    </form> *@
+
+    <!-- jQuery CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- JS -->
+    <script src="~/auth/sendmail/script.js"></script>
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+</html>
