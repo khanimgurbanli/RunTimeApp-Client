@@ -1,32 +1,89 @@
-﻿
+﻿@{
+    Layout = null;
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Sign Up Form by Colorlib</title>
+    <title>OTP Verification Form</title>
 
-    <!-- Main css -->
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/auth/otp/style.css">
 </head>
 <body>
+    @{
+        var messageType = TempData["MessageType"] as string;
+        var mesj = TempData["Message"] as string;
+        var alertClass = messageType == "success" ? "alert-success" : "alert-danger"; // Add a conditional class based on messageType
+    }
 
-    <div class="form-contain">
-
-        <label>Email</label>
-        <div class="email-group">
-            <input type="text" id="email1" name="email1" placeholder="user" value="">
-            <span class="atmark">＠</span>
-            <input type="text" id="email2" name="email2" placeholder="example.com" value="">
+    @if (!string.IsNullOrEmpty(mesj))
+    {
+        <div class="alert @alertClass" role="alert">
+            @mesj
         </div>
-        <label>Re-enter Email</label>
-        <div>
-            <input type="text" id="cemail1" name="cemail1" placeholder="user@example.com" value="">
-        </div>
+    }
 
-    </div>
-    <!-- JS -->
-    <script src="~/auth/otp/script.js"></script>
-</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+    @{
+        var message = TempData["Email"] as string;
+    }
+    <form id="otpForm" action="/Account/VerifyOTP" method="post" class="otp-form" name="otp-form">
+        <div class="title">
+            <h3>OTP VERIFICATION</h3>
+            <p class="info">An OTP has been sent to @message</p>
+            <p class="msg">Please enter OTP to verify</p>
+        </div>
+        <div class="otp-input-fields">
+            <input type="text" class="otp__digit otp__field otp__field__1" maxlength="1" name="otp1">
+            <input type="text" class="otp__digit otp__field otp__field__2" maxlength="1" name="otp2">
+            <input type="text" class="otp__digit otp__field otp__field__3" maxlength="1" name="otp3">
+            <input type="text" class="otp__digit otp__field otp__field__4" maxlength="1" name="otp4">
+            <input type="text" class="otp__digit otp__field otp__field__5" maxlength="1" name="otp5">
+            <input type="text" class="otp__digit otp__field otp__field__6" maxlength="1" name="otp6">
+        </div>
+        <br>
+        <div class="row justify-content-center">
+            <div class="col-md-6 d-flex justify-content-center">
+                <button type="button" id="verifyBtn" class="btn btn-success">Verify OTP</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var otpFields = document.querySelectorAll('.otp__field');
+            otpFields.forEach(function (field, index) {
+                field.addEventListener('input', function () {
+                    if (field.value.length >= 1 && index < otpFields.length - 1) {
+                        otpFields[index + 1].focus();
+                    }
+                });
+            });
+
+            document.getElementById('verifyBtn').addEventListener('click', function () {
+                var otp = '';
+                var inputs = document.querySelectorAll('.otp__field');
+                inputs.forEach(function (input) {
+                    otp += input.value; // Her bir inputtan değeri alarak OTP'yi oluştur
+                });
+
+                // OTP değerini bir input alanına atayarak action'a gönder
+                var otpInput = document.createElement('input');
+                otpInput.type = 'hidden';
+                otpInput.name = 'otp';
+                otpInput.value = otp;
+                document.getElementById('otpForm').appendChild(otpInput);
+
+                // Formu gerçek submit işlemi için gönder
+                document.getElementById('otpForm').submit();
+            });
+        });
+    </script>
+</body>
 </html>

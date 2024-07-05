@@ -1,6 +1,8 @@
 ﻿@{
     Layout = null;
 }
+@model RealTimeApp.Client.ViewModels.Login_ViewModel
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,15 +19,27 @@
 </head>
 <body>
 
-    <div class="main">
+    @{
+        var messageType = TempData["MessageType"] as string;
+        var message = TempData["Message"] as string;
+        var alertClass = messageType == "success" ? "alert-success" : "alert-danger"; 
+    }
 
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="alert @alertClass" role="alert">
+            @message
+        </div>
+    }
+
+    <div class="main">
         <!-- Sing in  Form -->
         <section class="sign-in">
             <div class="container">
                 <div class="signin-content">
                     <div class="signin-image">
                         <figure><img src="~/auth/images/signin-image.jpg" alt="sing up image"></figure>
-                        <a href="~/account/signup" class="signup-image-link">Create an account</a>
+                        <a href="~/account/sendotp" class="signup-image-link">Create an account</a>
                     </div>
 
                     <div class="signin-form">
@@ -33,15 +47,13 @@
                         <form method="POST" class="register-form" id="login-form">
                             <div class="form-group">
                                 <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                                <input type="text" name="your_name" id="your_name" placeholder="Your Name" />
+                                <input type="text" name="login" id="your_name" placeholder="Your Email" />
+                                <span asp-validation-for="Login" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
-                                <input type="password" name="your_pass" id="your_pass" placeholder="Password" />
-                            </div>
-                            <div class="form-group">
-                                <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />
-                                <label for="remember-me" class="label-agree-term"><span><span></span></span>Remember me</label>
+                                <input type="password" name="password" id="your_pass" placeholder="Password" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
                             </div>
                             <div class="form-group form-button">
                                 <input type="submit" name="signin" id="signin" class="form-submit" value="Log in" />
@@ -61,6 +73,8 @@
         </section>
 
     </div>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- JS -->
     <script src="~/auth/vendor/jquery/jquery.min.js"></script>

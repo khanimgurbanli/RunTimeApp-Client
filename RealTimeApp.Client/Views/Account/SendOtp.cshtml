@@ -15,49 +15,43 @@
     <link rel="stylesheet" href="~/auth/sendmail/style.css">
 </head>
 <body>
+    @{
+        var messageType = TempData["MessageType"] as string;
+        var message = TempData["Message"] as string;
+        var alertClass = messageType == "success" ? "alert-success" : "alert-danger"; // Add a conditional class based on messageType
+    }
 
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="alert @alertClass" role="alert">
+            @message
+        </div>
+    }
     <form method="POST" action="sendotp">
         <div class="form-contain">
             <h1>Send OTP</h1>
 
             <label>Email</label>
             <div class="email-group">
-                <input type="text" id="email1" name="username" placeholder="username" value="@Model.username">
+                <input type="text" id="email1" name="username" value=@Model.username placeholder="username" value="@Model.username">
                 <span class="atmark">＠</span>
-                <input type="text" id="email2" name="domain" placeholder="example.com" value="@Model.domain">
+                <input type="text" id="email2" name="domain" value=@Model.domain placeholder="example.com" value="@Model.domain">
             </div>
-            <span asp-validation-for="username" style="color:red"></span> 
-            <span asp-validation-for="domain" style="color:red"></span>
+            <span asp-validation-for="username" class="text-danger"></span>
+            <span asp-validation-for="domain" class="text-danger"></span>
             <br /> 
 
             <label>Re-enter Email</label>
             <div>
-                <input type="text" id="cemail1" name="email" placeholder="user@example.com" value="@Model.email">
-                <span asp-validation-for="email" style="color:red"></span>
+                <input type="text" id="cemail1" name="email" value=@Model.email placeholder="user@example.com" value="@Model.email">
+                <span asp-validation-for="email" class="text-danger"></span>
             </div>
 
             <button class="send-button">Send Me</button>
         </div>
     </form>
 
-   @*  <form method="POST" action="sendotp">
-        <div class="form-contain">
-            <h1>Send OTP</h1>
-
-            <label>Email</label>
-            <div class="email-group">
-                <input type="text" id="email1" name="username" placeholder="username" value="">
-                <span class="atmark">＠</span>
-                <input type="text" id="email2" name="domain" placeholder="example.com" value="">
-            </div>
-            <label>Re-enter Email</label>
-            <div>
-                <input type="text" id="cemail1" name="email" placeholder="user@example.com" value="">
-            </div>
-
-            <button class="send-button">Send Me</button>
-        </div>
-    </form> *@
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- jQuery CDN -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

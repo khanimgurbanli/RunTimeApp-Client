@@ -1,6 +1,7 @@
 ﻿@{
     Layout = null;
 }
+@model RealTimeApp.Client.ViewModels.Register_ViewModel
 
 <!DOCTYPE html>
 <html lang="en">
@@ -17,6 +18,18 @@
     <link rel="stylesheet" href="~/auth/css/style.css">
 </head>
 <body>
+    @{
+        var messageType = TempData["MessageType"] as string;
+        var message = TempData["Message"] as string;
+        var alertClass = messageType == "success" ? "alert-success" : "alert-danger"; 
+    }
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="alert @alertClass" role="alert">
+            @message
+        </div>
+    }
 
     <div class="main">
 
@@ -26,26 +39,47 @@
                 <div class="signup-content">
                     <div class="signup-form">
                         <h2 class="form-title">Sign up</h2>
-                        <form method="POST" class="register-form" id="register-form">
+                        <form method="POST" action="SignUp" class="register-form" id="register-form">
                             <div class="form-group">
                                 <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                                <input type="text" name="name" id="name" placeholder="Your Name" />
+                                <input type="text" name="firstname" value=@Model.firstname id="name" placeholder="Your Firstname" />
+                                <span asp-validation-for="firstname" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                <input type="text" name="lastname" value=@Model.lastname id="name" placeholder="Your Lastname" />
+                                <span asp-validation-for="firstname" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label for="email"><i class="zmdi zmdi-email"></i></label>
-                                <input type="email" name="email" id="email" placeholder="Your Email" />
+                                <input type="email" name="email" value=@Model.email id="email" placeholder="Your Email" />
+                                <span asp-validation-for="email" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label for="phone"><i class="zmdi zmdi-email"></i></label>
-                                <input type="phone" name="phonenumber" id="email" placeholder="Your Phone" />
+                                <input type="text" name="phonenumber" value=@Model.phoneNumber id="email" placeholder="Your Phone" />
+                                <span asp-validation-for="phoneNumber" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label for="pass"><i class="zmdi zmdi-lock"></i></label>
-                                <input type="password" name="pass" id="pass" placeholder="Password" />
+                                <input type="password" name="password" id="pass" placeholder="Password" />
+                                <span asp-validation-for="password"  class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
-                                <input type="password" name="re_pass" id="re_pass" placeholder="Repeat your password" />
+                                <input type="password" name="rePassword" id="re_pass" placeholder="Repeat your password" />
+                                <span asp-validation-for="rePassword" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                               
+                                <select name="roleId" id="roles" class="form-control">
+                                    <option value="">Select a role</option>
+                                    @foreach (var role in (List<SelectListItem>)TempData["Roles"])
+                                    {
+                                        <option value="@role.Value">@role.Text</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="roleId" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
@@ -64,6 +98,9 @@
             </div>
         </section>
     </div>
+
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- JS -->
     <script src="~/auth/vendor/jquery/jquery.min.js"></script>
