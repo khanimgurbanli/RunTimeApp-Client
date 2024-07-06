@@ -26,7 +26,7 @@
         $(document).ready(() => {
 
             const connection = new signalR.HubConnectionBuilder()
-                .withUrl("https://taskapi.perspektiv.az/hubaction", {
+                .withUrl("https://localhost:7071/hubaction", {
                     accessTokenFactory: () => '@accessToken'
                 })
                 .withAutomaticReconnect([1000, 1000, 2000])
@@ -55,17 +55,6 @@
                     taskList.append(`<li>${task.description}</li>`);
                 });
             });
-
-            // connection.on("receiveMessage", message => {
-            //     let messageList = $("#messages ul");
-            //     messageList.append(`<li class="new-message">${message}</li>`);
-            //     $("#messages").scrollTop($("#messages")[0].scrollHeight);
-
-            //     $(".new-message").addClass("highlight");
-            //     setTimeout(() => {
-            //         $(".new-message").removeClass("highlight");
-            //     }, 5000);
-            // });
 
             connection.on("tasksForUser", tasks => {
                 let taskList = $("#userTasks");
