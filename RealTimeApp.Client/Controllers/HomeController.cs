@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using RealTimeApp.Client.Models;
 using System.Diagnostics;
+using System.Net.Http.Headers;
+using System.Net.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using RealTimeApp.Client.ViewModels;
@@ -22,7 +25,7 @@ namespace RealTimeApp.Client.Controllers
             string role = "SuperUser";
 
             var httpClient = _httpClientFactory.CreateClient();
-            var apiEndpoint = $"https://localhost:7071/users/{role}";
+            var apiEndpoint = $"https://taskapi.perspektiv.az/users/{role}";
 
             var users = new List<SelectListItem>();
 
@@ -75,6 +78,7 @@ namespace RealTimeApp.Client.Controllers
 
             return View();
         }
+
 
         public IActionResult Privacy()
         {

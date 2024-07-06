@@ -26,7 +26,7 @@
         $(document).ready(() => {
 
             const connection = new signalR.HubConnectionBuilder()
-                .withUrl("https://localhost:7071/hubaction", {
+                .withUrl("https://taskapi.perspektiv.az/hubaction", {
                     accessTokenFactory: () => '@accessToken'
                 })
                 .withAutomaticReconnect([1000, 1000, 2000])
