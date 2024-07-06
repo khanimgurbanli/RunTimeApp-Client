@@ -25,7 +25,7 @@ namespace RealTimeApp.Client.Controllers
             string role = "SuperUser";
 
             var httpClient = _httpClientFactory.CreateClient();
-            var apiEndpoint = $"https://localhost:7071/users/{role}";
+            var apiEndpoint = $"https://taskapi.perspektiv.az/users/{role}";
 
             var users = new List<SelectListItem>();
 

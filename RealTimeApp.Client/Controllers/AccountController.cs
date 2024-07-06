@@ -34,7 +34,7 @@ namespace RealTimeApp.Client.Controllers
 
             try
             {
-                var apiUrl = "https://localhost:7071/auth/login";
+                var apiUrl = "https://taskapi.perspektiv.az/auth/login";
 
                 using (var httpClient = _httpClientFactory.CreateClient())
                 {
@@ -117,7 +117,7 @@ namespace RealTimeApp.Client.Controllers
         private async Task<List<SelectListItem>> GetRolesAsync()
         {
             var httpClient = _httpClientFactory.CreateClient();
-            var apiEndpoint = "https://localhost:7071/auth/get-all-roles";
+            var apiEndpoint = "https://taskapi.perspektiv.az/auth/get-all-roles";
 
             var roles = new List<SelectListItem>();
 
@@ -173,7 +173,7 @@ namespace RealTimeApp.Client.Controllers
             }
 
             var httpClient = _httpClientFactory.CreateClient();
-            var apiEndpoint = "https://localhost:7071/users/register";
+            var apiEndpoint = "https://taskapi.perspektiv.az//users/register";
 
             try
             {
@@ -228,7 +228,7 @@ namespace RealTimeApp.Client.Controllers
 
             var httpClient = _httpClientFactory.CreateClient();
 
-            var apiEndpoint = "https://localhost:7071/auth/send-otp-mail";
+            var apiEndpoint = "https://taskapi.perspektiv.az/auth/send-otp-mail";
 
             try
             {
@@ -290,7 +290,7 @@ namespace RealTimeApp.Client.Controllers
             }
 
             var httpClient = _httpClientFactory.CreateClient();
-            var apiEndpoint = "https://localhost:7071/auth/verify-otp";
+            var apiEndpoint = "https://taskapi.perspektiv.az/auth/verify-otp";
 
             try
             {
