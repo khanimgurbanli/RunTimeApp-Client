@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using RealTimeApp.Client.ViewModels;
 using System.Data;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text;
 
 namespace RealTimeApp.Client.Controllers
@@ -21,6 +24,7 @@ namespace RealTimeApp.Client.Controllers
         {
             return View();
         }
+
 
         [HttpPost]
         public async Task<IActionResult> SignIn(Login_ViewModel model)
@@ -48,6 +52,13 @@ namespace RealTimeApp.Client.Controllers
 
                         if (tokenResponse != null && tokenResponse.Token != null)
                         {
+                            // Remove the existing token cookie if it exists
+                            if (Request.Cookies.ContainsKey("AccessToken"))
+                            {
+                                Response.Cookies.Delete("AccessToken");
+                            }
+
+                            // Set the new token cookie
                             Response.Cookies.Append("AccessToken", tokenResponse.Token.AccessToken, new CookieOptions
                             {
                                 HttpOnly = true,
@@ -55,7 +66,27 @@ namespace RealTimeApp.Client.Controllers
                                 Expires = tokenResponse.Token.Expiration
                             });
 
-                            return RedirectToAction("Index", "Home");
+                            TempData["AccessToken"] = tokenResponse.Token.AccessToken;
+
+                            // Redirect based on user role
+                            var handler = new JwtSecurityTokenHandler();
+                            var jwtToken = handler.ReadJwtToken(tokenResponse.Token.AccessToken);
+                            var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
+                            if (roleClaim == "SuperAdmin")
+                            {
+                                return RedirectToAction("Admin", "Home");
+                            }
+                            else if (roleClaim == "SuperUser")
+                            {
+                                return RedirectToAction("User", "Home");
+                            }
+                            else
+                            {
+                                TempData["Message"] = "Invalid role.";
+                                TempData["MessageType"] = "error";
+                                return View(model);
+                            }
                         }
                         else
                         {
@@ -67,7 +98,7 @@ namespace RealTimeApp.Client.Controllers
                     else
                     {
                         var errorResponse = await response.Content.ReadAsStringAsync();
-                        TempData["Message"] = $"Login failed. Response: {errorResponse}";
+                        TempData["Message"] = "Not Found User";
                         TempData["MessageType"] = "error";
                         return View(model);
                     }
@@ -80,6 +111,7 @@ namespace RealTimeApp.Client.Controllers
                 return View(model);
             }
         }
+
 
 
         private async Task<List<SelectListItem>> GetRolesAsync()

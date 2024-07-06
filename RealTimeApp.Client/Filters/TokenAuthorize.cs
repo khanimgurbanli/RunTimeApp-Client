@@ -1,30 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
-namespace RealTimeApp.Client.Filters
+public class TokenAuthorize : Attribute, IAuthorizationFilter
 {
-    public class TokenAuthorize : Attribute, IAuthorizationFilter
+    public void OnAuthorization(AuthorizationFilterContext context)
     {
-        public void OnAuthorization(AuthorizationFilterContext context)
-        {
-            var token = context.HttpContext.Request.Cookies["AccessToken"];
+        var token = context.HttpContext.Request.Cookies["AccessToken"];
 
-            if (string.IsNullOrEmpty(token) || TokenHelper.IsTokenExpired(token))
-            {
-                context.Result = new RedirectToActionResult("SignIn", "Account", null);
-                return;
-            }
-        }
-    }
-
-    public static class TokenHelper
-    {
-        public static bool IsTokenExpired(string token)
+        if (string.IsNullOrEmpty(token))
         {
-            var jwtToken = new JwtSecurityToken(token);
-            return jwtToken.ValidTo < DateTime.UtcNow;
+            context.Result = new RedirectToActionResult("SignIn", "Account", new { message = "Your session has expired. Please sign in again." });
+            return;
         }
+
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadJwtToken(token);
+        var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
+        if (roleClaim == null)
+        {
+            context.Result = new RedirectToActionResult("SignIn", "Account", new { message = "Invalid role or unauthorized access." });
+            return;
+        }
+
+        // Optionally, you can store role information in TempData for use in controllers/views
+        context.HttpContext.Items["UserRole"] = roleClaim;
     }
 }
-

@@ -9,6 +9,18 @@
     height: 100vh;
 }
 
+
+
+
+.new-message {
+    background-color: #e0f7fa;
+}
+
+.highlight {
+    background-color: #80deea; 
+}
+
+
 #chat-container {
     width: 100%;
     max-width: 600px;
@@ -86,4 +98,3 @@ button {
     border-radius: 8px;
     display: none;
 }
-

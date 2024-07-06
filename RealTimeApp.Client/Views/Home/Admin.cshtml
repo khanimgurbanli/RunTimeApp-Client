@@ -1,0 +1,140 @@
+﻿@{
+    string accessToken = (string)TempData["AccessToken"];
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.8/signalr.min.js"></script>
+
+    <link rel="stylesheet" href="~/auth/chat/style.css">
+</head>
+<body>
+    <div id="chat-container">
+        <div id="status"></div>
+        <div id="messages">
+            <ul></ul>
+        </div>
+        <div class="form-group">
+            <select name="userId" id="users" class="form-control">
+                <option value="">Select a user</option>
+                @foreach (var user in (List<SelectListItem>)TempData["Users"])
+                {
+                    <option value="@user.Value">@user.Text</option>
+                }
+            </select>
+        </div>
+
+        <div style="display: flex; align-items: center;">
+            <input type="text" id="txtMessage" placeholder="Type your message...">
+            <button id="btnSend">Send</button>
+        </div>
+    </div>
+    <script>
+
+        $(document).ready(() => {
+
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("https://localhost:7071/hubaction", {
+                    accessTokenFactory: () => '@accessToken'
+                })
+                .withAutomaticReconnect([1000, 1000, 2000])
+                .build();
+
+            async function start() {
+                try {
+                    await connection.start();
+                    const connectionId = await connection.invoke("connected");
+                    console.log(`Connected with ID: ${connectionId}`);
+
+                    await connection.invoke("GetTasksForUser", connectionId);
+
+                    await fetchDatabaseData();
+                } catch (error) {
+                    console.error(error);
+                    setTimeout(() => start(), 2000);
+                }
+            }
+
+            start();
+
+            connection.on("initialTasks", tasks => {
+                let taskList = $("#messages ul");
+                tasks.forEach(task => {
+                    taskList.append(`<li>${task.description}</li>`);
+                });
+            });
+
+            connection.on("receiveMessage", message => {
+                let messageList = $("#messages ul");
+                messageList.append(`<li class="new-message">${message}</li>`);
+                $("#messages").scrollTop($("#messages")[0].scrollHeight);
+
+                $(".new-message").addClass("highlight");
+                setTimeout(() => {
+                    $(".new-message").removeClass("highlight");
+                }, 5000);
+            });
+
+            connection.on("userJoined", connectedId => {
+                $("#status").html(`${connectedId} connected`);
+                $("#status").css("background-color", "green");
+                animateStatus();
+            });
+
+            connection.on("userLeaved", connectedId => {
+                $("#status").html(`${connectedId} left`);
+                $("#status").css("background-color", "red");
+                animateStatus();
+            });
+
+            connection.onreconnected(connectedId => {
+                $("#status").css("background-color", "green");
+                $("#status").css("color", "white");
+                $("#status").html("Connected.");
+                animateStatus();
+
+                connection.invoke("GetTasksForUser", connectedId);
+            });
+
+            connection.onclose(connectedId => {
+                $("#status").css("background-color", "red");
+                $("#status").css("color", "white");
+                $("#status").html("Connection failed");
+                animateStatus();
+            });
+
+            $("#btnSend").click(() => {
+                let message = $("#txtMessage").val().trim();
+                let selectedUserId = $("#users").val();
+
+                if (message && selectedUserId) {
+                    connection.invoke("SendMessageAsync", message, selectedUserId)
+                        .catch(error => console.error(error));
+
+                    $("#txtMessage").val("");
+                }
+            });
+
+            function animateStatus() {
+                $("#status").fadeIn(2000, () => {
+                    setTimeout(() => {
+                        $("#status").fadeOut(2000);
+                    }, 2000);
+                });
+            }
+
+        });
+
+    </script>
+
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+</body>
+</html>
